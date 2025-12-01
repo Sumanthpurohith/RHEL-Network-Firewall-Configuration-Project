@@ -1,0 +1,48 @@
+RHEL Network, Firewall & NTP Configuration (Beginner-Friendly Guide)
+
+Goal: Configure network, DNS, gateway, firewall rules, and NTP sync using basic RHEL tools → nmcli, firewalld, chrony.
+
+   Step 1 : Check Current Network
+             DEVICE      TYPE      STATE      CONNECTION 
+             ens160      ethernet  connected  ens160     
+             virbr0      bridge    connected  virbr0     
+             lo          loopback  unmanaged  --         
+             virbr0-nic  tun       unmanaged  -- 
+  Step 2 : Assign Static IP
+              sudo nmcli con down ens160 
+              sudo nmcli con up ens160
+         Verify ip a 
+                ip r
+  step 3 : Configure Firewall (firewalld)
+            sudo firewall-cmd --permanent --add-service=http
+             sudo firewall-cmd --reload
+      sudo firewall-cmd --list-all
+ public (active)
+  target: default
+  icmp-block-inversion: no
+  interfaces: ens160
+  sources: 
+  services: cockpit dhcpv6-client ftp http https mountd nfs rpc-bind samba ssh
+  ports: 
+  protocols: 
+  masquerade: no
+  forward-ports: 
+  source-ports: 
+  icmp-blocks: 
+  rich rules: 
+  Step 4 : Enable NTP Time Sync (Chrony)
+       * Ensure chronyd is running
+                     sudo systemctl enable chronyd --now
+                      sudo systemctl status chronyd
+       *Add NTP server
+                      sudo vi /etc/chrony.conf
+Save → restart: 
+Reference ID    : A29FC801 (time.cloudflare.com)
+ This means SYNCED SUCCESSFULLY ✔
+  Step 5 :Test Your Network
+       ping -c 4 google.com
+Your output shows HTTP/1.1 301 ✔ means internet OK.
+  
+
+
+                  
